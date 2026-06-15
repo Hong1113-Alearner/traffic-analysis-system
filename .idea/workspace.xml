@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3f0313b3-e982-4470-9e27-2af3b26b5c9f" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/traffic_analysis_system.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/01_generate_data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/02_data_visualization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/03_train_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/04_signal_timing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/05_test_prediction.py" afterDir="false" />
-    </list>
+    <list default="true" id="3f0313b3-e982-4470-9e27-2af3b26b5c9f" name="更改" comment="基于机器学习的判断交通情况从而给予配时建议" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,7 +46,8 @@
     "Python.03_train_model.executor": "Run",
     "Python.04_signal_timing.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master"
+    "git-widget-placeholder": "master",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -87,6 +72,19 @@
       <option name="presentableId" value="Default" />
       <updated>1781509296274</updated>
     </task>
+    <task id="LOCAL-00001" summary="基于机器学习的判断交通情况从而给予配时建议">
+      <option name="closed" value="true" />
+      <created>1781539376479</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781539376479</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="基于机器学习的判断交通情况从而给予配时建议" />
+    <option name="LAST_COMMIT_MESSAGE" value="基于机器学习的判断交通情况从而给予配时建议" />
   </component>
 </project>
