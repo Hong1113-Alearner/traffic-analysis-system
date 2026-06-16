@@ -4,6 +4,35 @@ import joblib
 import pandas as pd
 import streamlit as st
 
+def get_max_queue_by_speed(avg_speed):
+    """
+    根据平均速度限制排队长度的最大值。
+    速度越高，理论上排队长度越小。
+    """
+    if avg_speed >= 60:
+        return 10
+    elif avg_speed >= 45:
+        return 20
+    elif avg_speed >= 30:
+        return 35
+    else:
+        return 50
+
+
+def get_max_occupancy_by_speed(avg_speed):
+    """
+    根据平均速度限制道路占有率的最大值。
+    速度越高，道路占有率通常不应过高。
+    """
+    if avg_speed >= 60:
+        return 0.40
+    elif avg_speed >= 45:
+        return 0.60
+    elif avg_speed >= 30:
+        return 0.80
+    else:
+        return 1.00
+
 
 # ==============================
 # 1. 页面基础配置
@@ -396,6 +425,16 @@ elif page == "单方向手动预测":
 
     col1, col2 = st.columns(2)
 
+    # 初始化单方向预测页面的滑块状态
+    if "single_avg_speed" not in st.session_state:
+        st.session_state["single_avg_speed"] = 35
+
+    if "single_queue_length" not in st.session_state:
+        st.session_state["single_queue_length"] = 20
+
+    if "single_occupancy" not in st.session_state:
+        st.session_state["single_occupancy"] = 0.55
+
     with col1:
         direction_cn = st.selectbox(
             "进口方向",
@@ -413,23 +452,47 @@ elif page == "单方向手动预测":
             "平均速度 km/h",
             min_value=0,
             max_value=80,
-            value=35
+            step=1,
+            key="single_avg_speed"
         )
+
+        # 根据平均速度动态限制排队长度最大值
+        max_queue = get_max_queue_by_speed(avg_speed)
+
+        # 如果之前的排队长度超过新的最大值，自动压回合理范围
+        if st.session_state["single_queue_length"] > max_queue:
+            st.session_state["single_queue_length"] = max_queue
 
         queue_length = st.slider(
             "排队长度",
             min_value=0,
-            max_value=60,
-            value=20
+            max_value=max_queue,
+            step=1,
+            key="single_queue_length"
+        )
+
+        st.caption(
+            f"当前平均速度为 {avg_speed} km/h，排队长度最大值限制为 {max_queue}。"
         )
 
     with col2:
+        # 根据平均速度动态限制道路占有率最大值
+        max_occupancy = get_max_occupancy_by_speed(avg_speed)
+
+        # 如果之前的占有率超过新的最大值，自动压回合理范围
+        if st.session_state["single_occupancy"] > max_occupancy:
+            st.session_state["single_occupancy"] = max_occupancy
+
         occupancy = st.slider(
             "道路占有率",
             min_value=0.0,
-            max_value=1.0,
-            value=0.55,
-            step=0.01
+            max_value=max_occupancy,
+            step=0.01,
+            key="single_occupancy"
+        )
+
+        st.caption(
+            f"当前平均速度为 {avg_speed} km/h，道路占有率最大值限制为 {max_occupancy:.2f}。"
         )
 
         hour = st.slider(
@@ -560,13 +623,31 @@ elif page == "四方向配时演示":
         with st.expander(direction_cn, expanded=True):
             col1, col2, col3, col4 = st.columns(4)
 
+            flow_key = f"{direction_en}_flow"
+            speed_key = f"{direction_en}_speed"
+            queue_key = f"{direction_en}_queue"
+            occ_key = f"{direction_en}_occ"
+
+            # 初始化四方向页面每个方向的滑块状态
+            if flow_key not in st.session_state:
+                st.session_state[flow_key] = default_flow
+
+            if speed_key not in st.session_state:
+                st.session_state[speed_key] = default_speed
+
+            if queue_key not in st.session_state:
+                st.session_state[queue_key] = default_queue
+
+            if occ_key not in st.session_state:
+                st.session_state[occ_key] = default_occ
+
             with col1:
                 vehicle_count = st.slider(
                     f"{direction_cn} - 5分钟车流量",
                     min_value=0,
                     max_value=150,
-                    value=default_flow,
-                    key=f"{direction_en}_flow"
+                    step=1,
+                    key=flow_key
                 )
 
             with col2:
@@ -574,28 +655,41 @@ elif page == "四方向配时演示":
                     f"{direction_cn} - 平均速度",
                     min_value=0,
                     max_value=80,
-                    value=default_speed,
-                    key=f"{direction_en}_speed"
+                    step=1,
+                    key=speed_key
                 )
+
+            # 根据当前方向的平均速度，动态限制排队长度和道路占有率
+            max_queue = get_max_queue_by_speed(avg_speed)
+            max_occupancy = get_max_occupancy_by_speed(avg_speed)
+
+            if st.session_state[queue_key] > max_queue:
+                st.session_state[queue_key] = max_queue
+
+            if st.session_state[occ_key] > max_occupancy:
+                st.session_state[occ_key] = max_occupancy
 
             with col3:
                 queue_length = st.slider(
                     f"{direction_cn} - 排队长度",
                     min_value=0,
-                    max_value=60,
-                    value=default_queue,
-                    key=f"{direction_en}_queue"
+                    max_value=max_queue,
+                    step=1,
+                    key=queue_key
                 )
+
+                st.caption(f"上限：{max_queue}")
 
             with col4:
                 occupancy = st.slider(
                     f"{direction_cn} - 道路占有率",
                     min_value=0.0,
-                    max_value=1.0,
-                    value=default_occ,
+                    max_value=max_occupancy,
                     step=0.01,
-                    key=f"{direction_en}_occ"
+                    key=occ_key
                 )
+
+                st.caption(f"上限：{max_occupancy:.2f}")
 
             rows.append({
                 "direction_cn": direction_cn,
